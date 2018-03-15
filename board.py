@@ -6,6 +6,7 @@ import numpy as np
 class IndexOutOfBoundsException(Exception): pass
 class NotEmptyException(Exception): pass
 
+
 class Board(object):
 
     EMPTY = 0
@@ -22,15 +23,6 @@ class Board(object):
 
         # Initialise the board matrix to the size specified, filled as empty
         self._matrix = np.matrix(np.full((self._size, self._size), self.EMPTY))
-
-    @property
-    def matrix(self):
-        """
-        Returns a copy (unlinked) of the board matrix in its current state. Changes to this matrix do not
-        affect the board instance state.
-        :return: np.matrix of board state, values are Board.EMPTY, Board.NOUGHT or Board.CROSS
-        """
-        return self._matrix.copy()
 
     @property
     def size(self):
@@ -95,6 +87,15 @@ class Board(object):
         # Set tile to value
         self._matrix[row, col] = value
 
+    def matrix_copy(self):
+        """
+        Returns a copy (unlinked) of the board matrix in its current state. Changes to this matrix do not
+        affect the board instance state.
+        :return: np.matrix of board state, values are Board.EMPTY, Board.NOUGHT or Board.CROSS
+        """
+        return self._matrix.copy()
+
+
     def _check_rows(self, matrix):
         # Get the number of rows in the matrix
         rows = matrix.shape[0]
@@ -103,11 +104,11 @@ class Board(object):
         for row_index in range(rows):
 
             # If the row is all noughts, return nought
-            if self._matrix[row_index] == self._row_of(self.NOUGHT):
+            if np.array_equal(self._matrix[row_index], self._row_of(self.NOUGHT)):
                 return self.NOUGHT
 
             # If the row is all crosses, return cross
-            elif self._matrix[row_index] == self._row_of(self.CROSS):
+            elif np.array_equal(self._matrix[row_index], self._row_of(self.CROSS)):
                 return self.CROSS
 
         # None of the rows are all noughts or crosses, return None
@@ -115,11 +116,11 @@ class Board(object):
 
     def _check_main_diagonal(self, matrix):
         # Check if main diagonal is all noughts
-        if matrix.diagonal() == self._row_of(self.NOUGHT):
+        if np.array_equal(matrix.diagonal(), self._row_of(self.NOUGHT)):
             return self.NOUGHT
 
         # Check if main diagonal is all crosses
-        elif matrix.diagonal() == self._row_of(self.CROSS):
+        elif np.array_equal(matrix.diagonal(), self._row_of(self.CROSS)):
             return self.CROSS
 
         # Main diagonal is not all noughts or crosses, return None
@@ -130,4 +131,4 @@ class Board(object):
         return np.matrix(np.full(self._size, val))
 
     def _in_bounds(self, row, col):
-        return (0 > row > self._size) or (0 > col > self._size)
+        return (0 <= row < self._size) or (0 <= col < self._size)

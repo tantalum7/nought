@@ -31,8 +31,8 @@ class Player(object):
 
 class HumanPlayer(Player):
 
-    def __init__(self, board, name="Human"):
-        super(HumanPlayer, self).__init__(board, name)
+    def __init__(self, board, is_nought, name="Human"):
+        super(HumanPlayer, self).__init__(board=board, is_nought=is_nought, name=name)
 
     def make_move(self):
 
@@ -40,7 +40,8 @@ class HumanPlayer(Player):
         while True:
 
             # Ask user for a move
-            user_inputs = input("Enter move, human (row col)").split(" ")
+            user_str = raw_input("Enter move, human (row col)")
+            user_inputs = user_str.strip(" ").split(" ")
 
             # If the user response doesn't split into two values, tell them to try again
             if len(user_inputs) != 2:
@@ -52,7 +53,7 @@ class HumanPlayer(Player):
                 try:
                     row = int(user_inputs[0])
                     col = int(user_inputs[1])
-                    self._board.set_tile(row, col)
+                    self.set_tile(row, col)
 
                 # Catch value error (not a number), and tell user to try again
                 except ValueError:
@@ -73,8 +74,8 @@ class HumanPlayer(Player):
 
 class AiPlayer(Player):
 
-    def __init__(self, board, name="HAL9000", algorithm=0):
-        super(AiPlayer, self).__init__(board, name)
+    def __init__(self, board, is_nought, name="HAL9000", algorithm=0):
+        super(AiPlayer, self).__init__(board=board, is_nought=is_nought, name=name)
         self._algorithm_choice = algorithm
         self._algorithms = [self._random_algorithm, self._better_algorithm]
 
