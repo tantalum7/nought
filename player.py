@@ -25,6 +25,10 @@ class Player(object):
     def is_nought(self):
         return self._is_nought
 
+    @property
+    def noughts_or_crosses_string(self):
+        return "noughts" if self.is_nought else "crosses"
+
     def set_tile(self, row, col):
         self._board.set_tile(row, col, self._set_val)
 

@@ -9,11 +9,11 @@ def main():
     while True:
 
         # Initialise game
-        game = Game()
+        game = Game(size=3)
 
         # Print player info
-        print("First player is {}, using noughts".format(game.players[0].name))
-        print("Second player is {}, using crosses".format(game.players[1].name))
+        print("First player is {}, using {}".format(game.players[0].name, game.players[0].noughts_or_crosses_string))
+        print("Second player is {}, using {}".format(game.players[1].name, game.players[1].noughts_or_crosses_string))
 
         # Wait for user to be ready
         raw_input("Press any key to start")
@@ -35,6 +35,7 @@ def main():
 
         # Ask if the user wants to play again
         raw_input("Press any key to play again...")
+
 
 
 if __name__ == "__main__":

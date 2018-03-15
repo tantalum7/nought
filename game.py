@@ -9,12 +9,12 @@ from view import View
 
 class Game(object):
 
-    def __init__(self):
+    def __init__(self, size=3):
         """
         Main game logic class
         """
         # Initialise vars
-        self.board = Board(3)
+        self.board = Board(size)
         self.view = View(self.board)
         self._turn_number = 0
 

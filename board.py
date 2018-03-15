@@ -19,7 +19,7 @@ class Board(object):
         :param size:
         """
         # Store board size in class (size == width == height)
-        self._size = 3
+        self._size = size
 
         # Initialise the board matrix to the size specified, filled as empty
         self._matrix = np.matrix(np.full((self._size, self._size), self.EMPTY))
@@ -103,12 +103,15 @@ class Board(object):
         # Iterate through the number of rows
         for row_index in range(rows):
 
+            a = matrix[row_index]
+            b = self._row_of(self.NOUGHT)
+
             # If the row is all noughts, return nought
-            if np.array_equal(self._matrix[row_index], self._row_of(self.NOUGHT)):
+            if np.array_equal(matrix[row_index], self._row_of(self.NOUGHT)):
                 return self.NOUGHT
 
             # If the row is all crosses, return cross
-            elif np.array_equal(self._matrix[row_index], self._row_of(self.CROSS)):
+            elif np.array_equal(matrix[row_index], self._row_of(self.CROSS)):
                 return self.CROSS
 
         # None of the rows are all noughts or crosses, return None
@@ -132,3 +135,16 @@ class Board(object):
 
     def _in_bounds(self, row, col):
         return (0 <= row < self._size) or (0 <= col < self._size)
+
+if __name__ == "__main__":
+
+
+    b = Board(10)
+
+    for x in range(10):
+        b.set_tile(x, 0, Board.NOUGHT)
+
+    r = b.is_won()
+
+    pass
+
