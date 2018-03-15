@@ -20,7 +20,7 @@ class Game(object):
 
         # Initialise players
         self.nought_player = HumanPlayer(self.board, True)
-        self.cross_player = AiPlayer(self.board, False)
+        self.cross_player = AiPlayer(self.board, False, algorithm=AiPlayer.RANDOM_DEFENSIVE_ALGORITHM)
         self.players = [self.nought_player, self.cross_player]
 
         # Shuffle player list to randomise first player

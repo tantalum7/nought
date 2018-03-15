@@ -28,56 +28,74 @@ class Board(object):
     def size(self):
         return self._size
 
-    def is_full(self):
+    def is_full(self, matrix=None):
         """
         Checks if all board tiles have been taken, and returns true/false
+        :param matrix: Optionally apply this to matrix other than the internal one
         :return: bool
         """
-        return self.EMPTY not in self._matrix
+        # If matrix is left as None, use the internal board matrix
+        matrix = self._matrix if matrix is None else matrix
 
-    def is_won(self):
+        # Return true if Board.EMPTY does not appear anywhere in the board (its full)
+        return self.EMPTY not in matrix
+
+    def is_won(self, matrix=None):
         """
         Checks for full column, row or diagonal of noughts or crosses.
+        :param matrix: Optionally apply this to matrix other than the internal one
         :return: Board.NOUGHT, Board.CROSS or None
         """
+        # If matrix is left as None, use the internal board matrix
+        matrix = self._matrix if matrix is None else matrix
+
         # Check rows, and return it if we found a winner
-        winner = self._check_rows(self._matrix)
+        winner = self._check_rows(matrix)
         if winner:
             return winner
 
         # Check columns (check rows of transposed matrix), and return it if we found a winner
-        winner = self._check_rows(self._matrix.T)
+        winner = self._check_rows(matrix.T)
         if winner:
             return winner
 
         # Check main diagonal for a winner, and return it if there is one
-        winner = self._check_main_diagonal(self._matrix)
+        winner = self._check_main_diagonal(matrix)
         if winner:
             return winner
 
         # Check the other diagonal for a winner (flip, then check main diagonal), return the result
-        return self._check_main_diagonal(np.fliplr(self._matrix))
+        return self._check_main_diagonal(np.fliplr(matrix))
 
-    def is_empty(self, row, col):
+    def is_empty(self, row, col, matrix=None):
         """
         Checks if the tile with row, col specifed is empty or not
         :param row: Row index
         :param col: Column index
+        :param matrix: Optionally apply this to matrix other than the internal one
         :return: bool
         """
-        return self._matrix[row, col] == self.EMPTY
+        # If matrix is left as None, use the internal board matrix
+        matrix = self._matrix if matrix is None else matrix
 
-    def set_tile(self, row, col, value):
+        # Return true if the tile at the given row/col is empty
+        return matrix[row, col] == self.EMPTY
+
+    def set_tile(self, row, col, value, matrix=None):
         """
         Sets the tile with the given value
         :param row: Row index
         :param col: Column index
         :param value: Value to set (should be Board.NOUGHT or Board.CROSS)
+        :param matrix: Optionally apply this to matrix other than the internal one
         :raises IndexOutOfBoundsException if row/col are out of bounds
         :raises NotEmptyException if tile already taken
         """
+        # If matrix is left as None, use the internal board matrix
+        matrix = self._matrix if matrix is None else matrix
+
         # Raise exception if tile isn't empty
-        if not self.is_empty(row, col):
+        if not self.is_empty(row, col, matrix):
             raise NotEmptyException("row:{}, col:{}".format(row, col))
 
         # Raise exception if row/col are out of bounds
@@ -85,7 +103,7 @@ class Board(object):
             raise IndexOutOfBoundsException("row:{}, col:{} - min:0, max:{}".format(row, col, self._size))
 
         # Set tile to value
-        self._matrix[row, col] = value
+        matrix[row, col] = value
 
     def matrix_copy(self):
         """
@@ -94,6 +112,15 @@ class Board(object):
         :return: np.matrix of board state, values are Board.EMPTY, Board.NOUGHT or Board.CROSS
         """
         return self._matrix.copy()
+
+    def list_empty_tiles(self, matrix=None):
+        """
+        Produces a list of (row, col) tuples of all the empty tiles on the board
+        :param matrix: Optionally apply this to matrix other than the internal one
+        :return: list of tuples
+        """
+        rows, cols = np.where(self._matrix == self.EMPTY)
+        return [(rows[x], cols[x]) for x in range(len(rows))]
 
 
     def _check_rows(self, matrix):
@@ -139,12 +166,14 @@ class Board(object):
 if __name__ == "__main__":
 
 
-    b = Board(10)
+    b = Board(3)
 
-    for x in range(10):
+    for x in range(3):
         b.set_tile(x, 0, Board.NOUGHT)
 
     r = b.is_won()
+
+    a = b.list_empty_tiles()
 
     pass
 

@@ -78,10 +78,14 @@ class HumanPlayer(Player):
 
 class AiPlayer(Player):
 
-    def __init__(self, board, is_nought, name="HAL9000", algorithm=0):
+    RANDOM_ALGORITHM = 0
+    RANDOM_DEFENSIVE_ALGORITHM = 1
+
+    def __init__(self, board, is_nought, name="HAL9000", algorithm=RANDOM_ALGORITHM):
         super(AiPlayer, self).__init__(board=board, is_nought=is_nought, name=name)
         self._algorithm_choice = algorithm
-        self._algorithms = [self._random_algorithm, self._better_algorithm]
+        self._algorithms = {self.RANDOM_ALGORITHM: self._random_algorithm,
+                            self.RANDOM_DEFENSIVE_ALGORITHM: self._random_defensive_algorithm}
 
     def make_move(self):
         self._algorithms[self._algorithm_choice]()
@@ -110,6 +114,36 @@ class AiPlayer(Player):
         # Return the move
         return row, col
 
-    def _better_algorithm(self):
-        raise NotImplemented
+    def _random_defensive_algorithm(self):
+
+        # If the enemy is one move away from winning, take that tile
+        enemy_winning_move = self._find_enemy_winning_move()
+        if enemy_winning_move:
+            self.set_tile(*enemy_winning_move)
+            return enemy_winning_move
+
+        # Enemy isn't one tile from wining, just take a random tile
+        else:
+            return self._random_algorithm()
+
+    def _find_enemy_winning_move(self):
+
+        # Fetch the enemy player type (if we're noughts, they must be crosses)
+        enemy = self._board.CROSS if self.is_nought else self._board.NOUGHT
+
+        # Iterate through all empty tiles
+        for row, col in self._board.list_empty_tiles():
+
+            # Grab a clean copy of the board matrix
+            matrix = self._board.matrix_copy()
+
+            # Set the tile as an enemy tile
+            self._board.set_tile(row, col, enemy, matrix)
+
+            # Can the enemy now win?
+            if self._board.is_won(matrix) == enemy:
+                return (row, col)
+
+        # If we get here, the enemy is not one turn away from winning, return None
+        return None
 
