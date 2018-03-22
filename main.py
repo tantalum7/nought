@@ -4,8 +4,11 @@ from game import Game
 
 
 def main():
+    """
+    Main game function
+    """
 
-
+    # Loop forever, starting a new game once the old one ends
     while True:
 
         # Initialise game
@@ -37,9 +40,8 @@ def main():
         raw_input("Press any key to play again...")
 
 
-
+# If this script is execute directly, call the main function
 if __name__ == "__main__":
-
     main()
 
 

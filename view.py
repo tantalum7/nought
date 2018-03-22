@@ -1,16 +1,18 @@
 
-# Library imports
-
-
-# Project imports
-
 
 class View(object):
 
     def __init__(self, board):
+        """
+        Simple ascii text based view, to display the current board state
+        :param board:
+        """
         self._board = board
 
     def render(self):
+        """
+        Render the current board state to the screen, in ascii text
+        """
 
         # Grab a copy of the board matrix
         board_matrix = self._board.matrix_copy()
@@ -30,7 +32,7 @@ class View(object):
             # Iterate through each column
             for col in range(self._board.size):
 
-                # Set the appropirate icon char if the tile is nought, cross or empty
+                # Set the appropriate icon char if the tile is nought, cross or empty
                 if board_matrix[row, col] == self._board.NOUGHT:
                     icon = "0"
                 elif board_matrix[row, col] == self._board.CROSS:
@@ -45,4 +47,7 @@ class View(object):
             print(row_str)
 
     def clear_screen(self):
+        """
+        Clear the screen, by printing loads of newlines
+        """
         print('\n' * 80)

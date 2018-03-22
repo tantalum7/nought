@@ -2,20 +2,21 @@
 # Project imports
 import numpy as np
 
-
+# Custom exception classes
 class IndexOutOfBoundsException(Exception): pass
 class NotEmptyException(Exception): pass
 
 
 class Board(object):
 
+    # Numerical definitions for nought, cross and empty.
     EMPTY = 0
     NOUGHT = 1
     CROSS = 2
 
     def __init__(self, size=3):
         """
-        Class to store the current state of the noughts&crosses board, with a user defined square size
+        Class to store the current state of the noughts & crosses board, with a user defined square size
         :param size:
         """
         # Store board size in class (size == width == height)
@@ -26,6 +27,10 @@ class Board(object):
 
     @property
     def size(self):
+        """
+        Read only size property, returns size of one side of the matrix (its square)
+        :return: int
+        """
         return self._size
 
     def is_full(self, matrix=None):
@@ -94,13 +99,13 @@ class Board(object):
         # If matrix is left as None, use the internal board matrix
         matrix = self._matrix if matrix is None else matrix
 
-        # Raise exception if tile isn't empty
-        if not self.is_empty(row, col, matrix):
-            raise NotEmptyException("row:{}, col:{}".format(row, col))
-
         # Raise exception if row/col are out of bounds
         if not self._in_bounds(row, col):
             raise IndexOutOfBoundsException("row:{}, col:{} - min:0, max:{}".format(row, col, self._size))
+
+        # Raise exception if tile isn't empty
+        if not self.is_empty(row, col, matrix):
+            raise NotEmptyException("row:{}, col:{}".format(row, col))
 
         # Set tile to value
         matrix[row, col] = value
@@ -124,6 +129,12 @@ class Board(object):
 
 
     def _check_rows(self, matrix):
+        """
+        Checks rows only to see if there is a full line of noughts or crosses
+        :param matrix: Optionally apply this to matrix other than the internal one
+        :return: Board.NOUGHT, Board.CROSS or None
+        """
+
         # Get the number of rows in the matrix
         rows = matrix.shape[0]
 
@@ -145,6 +156,12 @@ class Board(object):
         return None
 
     def _check_main_diagonal(self, matrix):
+        """
+        Checks the main diagonal (top-left to bottom-right) only for a full line of noughts or crosses
+        :param matrix: Optionally apply this to matrix other than the internal one
+        :return: Board.NOUGHT, Board.CROSS or None
+        """
+
         # Check if main diagonal is all noughts
         if np.array_equal(matrix.diagonal(), self._row_of(self.NOUGHT)):
             return self.NOUGHT
@@ -158,22 +175,19 @@ class Board(object):
             return None
 
     def _row_of(self, val):
+        """
+        Helper function, returns a matrix full of a value the same size as the board row
+        :param val: Value to fill matrix with
+        :return: np.Matrix [Board.size, 1]
+        """
         return np.matrix(np.full(self._size, val))
 
     def _in_bounds(self, row, col):
+        """
+        Checks if the row/col passed are in bounds
+        :param row: row to check
+        :param col: column to check
+        :return: bool
+        """
         return (0 <= row < self._size) or (0 <= col < self._size)
-
-if __name__ == "__main__":
-
-
-    b = Board(3)
-
-    for x in range(3):
-        b.set_tile(x, 0, Board.NOUGHT)
-
-    r = b.is_won()
-
-    a = b.list_empty_tiles()
-
-    pass
 
